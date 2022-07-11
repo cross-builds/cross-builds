@@ -1,0 +1,16 @@
+From alpine:latest
+Run retry() { i=0; while [  $i -lt 9 ]; do "$@" && return || sleep 30; i="${i+1}"; done; "$@"; } \
+    && retry apk add --no-cache \
+    bash \
+    clang \
+    cmake \
+    compiler-rt \
+    compiler-rt-static \
+    lld \
+    make \
+    musl-dev
+
+WORKDIR /usr/src
+COPY main.c main.c
+RUN clang -fuse-ld=lld --rtlib=compiler-rt main.c -o main_c.out
+ENTRYPOINT ["./main_c.out"]

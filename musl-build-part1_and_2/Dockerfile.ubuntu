@@ -1,0 +1,22 @@
+FROM ubuntu:latest
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update \
+    && apt install -y --no-install-recommends \
+    clang \
+    lld \
+    musl-dev
+
+WORKDIR /usr/src
+COPY main.c main.c
+RUN clang -nostdinc \
+          -nostdlib \
+          -fuse-ld=lld \
+          --target=x86_64-linux-musl \
+          -I/usr/include/x86_64-linux-musl \
+          -L/usr/lib/x86_64-linux-musl \
+          /usr/lib/x86_64-linux-musl/crt1.o \
+          /usr/lib/x86_64-linux-musl/crti.o \
+          /usr/lib/x86_64-linux-musl/crtn.o \
+          -lc main.c -o main_c.out
+
+#ENTRYPOINT ["./main_c.out"]

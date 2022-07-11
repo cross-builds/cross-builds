@@ -1,0 +1,12 @@
+FROM ubuntu:latest
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update \
+    && apt install -y --no-install-recommends \
+    g++
+
+WORKDIR /usr/src
+COPY main.c main.c
+COPY main.cpp main.cpp
+RUN gcc main.c -o main_c.out
+RUN g++ main.cpp -o main_cpp.out
+ENTRYPOINT ["./main_c.out"]
